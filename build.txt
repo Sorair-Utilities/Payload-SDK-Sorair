@@ -1,0 +1,26 @@
+sudo apt-get update
+sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+
+# x86_64 build
+cd /home/ross/Projects/Payload-SDK-Sorair
+
+cmake -S . -B build-x86 \
+  -DUSE_SYSTEM_ARCH=LINUX \
+  -DPSDK_LIB_ARCH_DIR=x86_64-linux-gnu-gcc \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX="$PWD/prebuilt/x86_64"
+
+cmake --build build-x86 -j
+cmake --install build-x86   # installs to ./prebuilt/x86_64 (no root)
+
+
+# Pi Zero (hard-float) build
+cmake -S . -B build-pizero \
+  -DUSE_SYSTEM_ARCH=LINUX \
+  -DPSDK_LIB_ARCH_DIR=arm-linux-gnueabihf-gcc \
+  -DCMAKE_TOOLCHAIN_FILE="$PWD/toolchains/rpi-zero-gnueabihf.cmake" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX="$PWD/prebuilt/armhf-rpi0"
+
+cmake --build build-pizero -j
+cmake --install build-pizero
